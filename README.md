@@ -19,7 +19,7 @@ debugging from Linux.
 If you are running the program outside of VSCode, or not using a debugger, you
 can run it from the command line.
 
-Example: file_to_array.exe -i input_file
+Example: file_to_array.exe -i input_file [-n bytes_per_line]
 
 ## Authors
 
