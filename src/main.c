@@ -5,6 +5,7 @@
  * Converts a file to a byte array.
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +21,7 @@
 int main(int argc, char** argv) {
     char* file_path = NULL;
     unsigned bytes_per_line = 12;
+    bool vector_mode = false;
 
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "-i")) {
@@ -41,6 +43,8 @@ int main(int argc, char** argv) {
                 fprintf(stderr, "[ERROR] Missing bytes per line after -n.\n");
                 return EXIT_FAILURE;
             }
+        } else if (!strcmp(argv[i], "-v")) {
+            vector_mode = true;
         } else {
             fprintf(stderr, "[WARN] Skipping invalid parameter: %s.\n",
                 argv[i]);
@@ -68,7 +72,11 @@ int main(int argc, char** argv) {
     long file_size = ftell(file);
     rewind(file);
 
-    printf("unsigned char data[] = {\n    ");
+    if (vector_mode) {
+        printf("const std::vector<unsigned char> data = {\n    ");
+    } else {
+        printf("const unsigned char data[] = {\n    ");
+    }
 
     unsigned line_count = 0;
     unsigned total_count = 0;
@@ -94,7 +102,11 @@ int main(int argc, char** argv) {
         }
     }
 
-    printf("\n};\n\nsize_t count = %u;\n", total_count);
+    if (vector_mode) {
+        printf("\n};\n");
+    } else {
+        printf("\n};\n\nsize_t count = %u;\n", total_count);
+    }
 
     fclose(file);
     return EXIT_SUCCESS;
