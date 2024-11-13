@@ -6,6 +6,7 @@
  */
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,7 @@
 int main(int argc, char** argv) {
     char* file_path = NULL;
     unsigned bytes_per_line = 12;
+    char* data_type = "unsigned char";
     bool vector_mode = false;
 
     for (int i = 1; i < argc; ++i) {
@@ -43,6 +45,8 @@ int main(int argc, char** argv) {
                 fprintf(stderr, "[ERROR] Missing bytes per line after -n.\n");
                 return EXIT_FAILURE;
             }
+        } else if (!strcmp(argv[i], "-s")) {
+            data_type = "uint8_t";
         } else if (!strcmp(argv[i], "-v")) {
             vector_mode = true;
         } else {
@@ -73,9 +77,9 @@ int main(int argc, char** argv) {
     rewind(file);
 
     if (vector_mode) {
-        printf("const std::vector<unsigned char> data = {\n    ");
+        printf("const std::vector<%s> data = {\n    ", data_type);
     } else {
-        printf("const unsigned char data[] = {\n    ");
+        printf("const %s data[] = {\n    ", data_type);
     }
 
     unsigned line_count = 0;
